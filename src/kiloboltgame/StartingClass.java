@@ -19,10 +19,12 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
 	private Image image, currentSprite, character, character2, character3,
 			characterDown, characterJumped, background, heliboy, heliboy2,
 			heliboy3, heliboy4, heliboy5;
+	public static Image tiledirt, tileocean;
 	private Graphics second;
 	private URL base;
 	private static Background bg1, bg2;
 	private Animation anim, hanim;
+	private ArrayList<Tile> tilearray = new ArrayList<Tile>();
 
 	@Override
 	public void init() {
@@ -54,6 +56,9 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
 		heliboy5 = getImage(base, "data/heliboy5.png");
 
 		background = getImage(base, "data/background.png");
+		
+		tiledirt = getImage(base, "data/tiledirt.png");
+		tileocean = getImage(base, "data/tileocean.png");
 
 		anim = new Animation();
 		anim.addFrame(character, 1250);
@@ -81,6 +86,19 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
 		hb = new Heliboy(340, 360);
 		hb2 = new Heliboy(700, 360);
 		robot = new Robot();
+		
+		// Initialize Tiles
+				for (int i = 0; i < 200; i++) {
+					for (int j = 0; j < 12; j++) {
+						if (j == 11) {
+							Tile t = new Tile(i, j, 2);
+							tilearray.add(t);
+						} if (j == 10) {
+							Tile t = new Tile(i, j, 1);
+							tilearray.add(t);
+						}
+					}
+				}
 
 		Thread thread = new Thread(this);
 		thread.start();
@@ -116,6 +134,7 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
 				}
 			}
 
+			updateTiles();
 			hb.update();
 			hb2.update();
 			bg1.update();
@@ -133,6 +152,20 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
 	public void animate() {
 		anim.update(10);
 		hanim.update(50);
+	}
+	
+	public void updateTiles() {
+		for (int i = 0; i < tilearray.size(); i++) {
+			Tile t = (Tile)tilearray.get(i);
+			t.update();
+		}
+	}
+	
+	public void paintTiles(Graphics g) {
+		for (int i = 0; i < tilearray.size(); i++) {
+			Tile t = (Tile)tilearray.get(i);
+			g.drawImage(t.getTileImage(), t.getTileX(), t.getTileY(), this);
+		}
 	}
 
 	@Override
@@ -155,6 +188,7 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
 	public void paint(Graphics g) {
 		g.drawImage(background, bg1.getBgX(), bg1.getBgY(), this);
 		g.drawImage(background, bg2.getBgX(), bg2.getBgY(), this);
+		paintTiles(g);
 
 		ArrayList projectiles = robot.getProjectiles();
 		for (int i = 0; i < projectiles.size(); i++) {
