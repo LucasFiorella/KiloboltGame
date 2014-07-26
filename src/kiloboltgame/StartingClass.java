@@ -22,7 +22,8 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
             characterDown, characterJumped, background, heliboy, heliboy2,
             heliboy3, heliboy4, heliboy5;
 
-    public static Image tilegrassTop, tilegrassBot, tilegrassLeft, tilegrassRight, tiledirt;
+    public static Image tilegrassTop, tilegrassBot, tilegrassLeft,
+            tilegrassRight, tiledirt;
 
     private Graphics second;
     private URL base;
@@ -68,7 +69,6 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
         tilegrassLeft = getImage(base, "data/tilegrassleft.png");
         tilegrassRight = getImage(base, "data/tilegrassright.png");
 
-
         anim = new Animation();
         anim.addFrame(character, 1250);
         anim.addFrame(character2, 50);
@@ -103,7 +103,6 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
 
         hb = new Heliboy(340, 360);
         hb2 = new Heliboy(700, 360);
-        
 
         Thread thread = new Thread(this);
         thread.start();
@@ -225,10 +224,6 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
             g.fillRect(p.getX(), p.getY(), 10, 5);
         }
 
-        g.drawRect((int)robot.rect.getX(), (int)robot.rect.getY(),
-        		(int)robot.rect.getWidth(), (int)robot.rect.getHeight());
-        g.drawRect((int)robot.rect2.getX(), (int)robot.rect2.getY(),
-        		(int)robot.rect2.getWidth(), (int)robot.rect2.getHeight());
         g.drawImage(currentSprite, robot.getCenterX() - 61,
                 robot.getCenterY() - 63, this);
         g.drawImage(hanim.getImage(), hb.getCenterX() - 48,
@@ -284,8 +279,10 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
             break;
 
         case KeyEvent.VK_CONTROL:
-            if (robot.isDucked() == false && robot.isJumped() == false) {
+            if (robot.isDucked() == false && robot.isJumped() == false
+                    && robot.isReadyToFire()) {
                 robot.shoot();
+                robot.setReadyToFire(false);
             }
             break;
 
@@ -316,6 +313,10 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
         case KeyEvent.VK_SPACE:
             break;
 
+        case KeyEvent.VK_CONTROL:
+            robot.setReadyToFire(true);
+            break;
+
         }
 
     }
@@ -333,8 +334,8 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
     public static Background getBg2() {
         return bg2;
     }
-    
-    public static Robot getRobot(){
+
+    public static Robot getRobot() {
         return robot;
     }
 
